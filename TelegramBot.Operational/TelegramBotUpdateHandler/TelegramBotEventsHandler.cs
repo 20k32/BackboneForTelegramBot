@@ -62,10 +62,33 @@ namespace TelegramBot.Operational.TelegramBotUpdateHandler
             switch (update.Type)
             {
                 case UpdateType.Message when update.Message is not null:
-                    await Events.SendShowButtonsCommand(botClient, cancellationToken, update.Message.Chat.Id);
+                    await HandleTextMessage(botClient, update.Message, cancellationToken);
                     break;
                 case UpdateType.CallbackQuery: break;
             }
+        }
+
+        private Task HandleTextMessage(ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
+        {
+            var id = message.Chat.Id;
+            var text = message.Text;
+            var result = Task.CompletedTask;
+
+            if (text is null)
+            {
+                return result;
+            }
+
+            if (text == Events.ComponentsCache.Commands.HideButtonsCommand)
+            {
+                result = Events.SendHideButtonsCommand(botClient, cancellationToken, id);
+            }
+            else if (text == Events.ComponentsCache.Commands.ShowButtonsCommand)
+            {
+                result = Events.SendShowButtonsCommand(botClient, cancellationToken, id);
+            }
+
+            return result;
         }
 
         private Task HandleExceptionAsync(ITelegramBotClient botClient, Exception ex, CancellationToken cancellationToken) =>
