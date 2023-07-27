@@ -3,11 +3,11 @@ using TelegramBot.Core.Models.Configuration;
 
 namespace TelegramBot.Core.Logging
 {
-    internal sealed class CustomLogger : ILogger
+    internal sealed class ConsoleLogger : ILogger
     {
         private ProgramNotifications Notifications = null!;
 
-        public CustomLogger(ProgramNotifications notifications) =>
+        public ConsoleLogger(ProgramNotifications notifications) =>
             Notifications = notifications;
 
         public Task LogInformationAsync(string message) =>

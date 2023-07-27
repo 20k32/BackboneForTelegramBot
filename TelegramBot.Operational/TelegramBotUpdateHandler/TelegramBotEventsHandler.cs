@@ -1,6 +1,8 @@
-﻿using Telegram.Bot;
+﻿using System.ComponentModel.DataAnnotations;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Core.Events.Cache;
 using TelegramBot.Core.Logging;
 using TelegramBot.Core.Models.Configuration;
@@ -12,15 +14,18 @@ namespace TelegramBot.Operational.TelegramBotUpdateHandler
         private ITelegramBotClient TelegramClient = null!;
         private ILogger Logger = null!;
         private EventCache Events = null!;
-        public ProgramConfiguration Configuration = null!;
-
+        private ProgramConfiguration Configuration = null!;
+        private TextPlaceHolders Placeholders = null!;
+        private BotInlineCommands InlineCommands = null!;
 
         public TelegramBotEventsHandler(ITelegramBotClient telegramBotClient,
             ProgramConfiguration programConfig,
+            TextPlaceHolders textPlaceHolders,
+            BotInlineCommands inlineCommands,
             ILogger logger,
             EventCache events) =>
-            (TelegramClient, Configuration, Logger, Events) =
-                (telegramBotClient, programConfig, logger, events);
+            (TelegramClient, Configuration, Logger, Events, Placeholders, InlineCommands) =
+                (telegramBotClient, programConfig, logger, events, textPlaceHolders, inlineCommands);
 
         private async Task ConditionToStopBot()
         {
@@ -61,13 +66,13 @@ namespace TelegramBot.Operational.TelegramBotUpdateHandler
 
             switch (update!.Type)
             {
-                case UpdateType.Message 
+                case UpdateType.Message
                     when update.Message is { } message:
                         await HandleTextMessage(botClient, message, cancellationToken);
                     break;
                 case UpdateType.CallbackQuery
-                    when update.Message is { } message:
-                    
+                    when update.CallbackQuery is { } callbackQuery:
+                        await HandleCallbackQuery(botClient, callbackQuery, cancellationToken);
                     break;
             }
         }
@@ -91,9 +96,53 @@ namespace TelegramBot.Operational.TelegramBotUpdateHandler
             {
                 result = Events.SendShowButtonsCommand(botClient, cancellationToken, id);
             }
+            else if (text == Events.ComponentsCache.Commands.ButtonPlaceHolder1)
+            {
+                result = Events.SendTextMessageCommand(botClient, cancellationToken, id, Placeholders.PlaceHolder1);
+            }
+            else if(text == Events.ComponentsCache.Commands.ButtonPlaceHolder2)
+            {
+                result = Events.SendTextMessageWithInlineButtons(botClient, cancellationToken, id, Placeholders.PlaceHolder2);
+            }
             else
             {
-                result = Events.SendTextMessageWithInlineButtons(botClient, cancellationToken, id, text);
+                var reversed = message.Text.Reverse();
+                var reversedString = string.Join("", reversed);
+                result = Events.SendTextMessageCommand(botClient, cancellationToken, id, reversedString);
+            }
+            return result;
+        }
+
+        private Task HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
+        {
+            var result = Task.CompletedTask;
+
+            if (callbackQuery.Message is null)
+            {
+                return result;
+            }
+
+            var id = callbackQuery.Message.Chat.Id;
+            var messageId = callbackQuery.Message.MessageId;
+            var text = callbackQuery.Data;
+            
+
+            if (text is null)
+            {
+                return result;
+            }
+
+            if (text == InlineCommands.InlineButtonOkCallback)
+            {
+                result = Events.SendEditMessageTextAndInlieMarkupCommand(botClient, cancellationToken, id, Placeholders.PlaceHolder3, messageId);
+            }
+            else if (text == InlineCommands.InlineButtonCancelCallback)
+            {
+                result = Events.SendEditMessageTextCommand(botClient, cancellationToken, id, Placeholders.PlaceHolder4, messageId);
+            }
+            else if(text == InlineCommands.LateralInlineKeyboardButtonNiceCallback)
+            {
+                result = Events.SendEditMessageTextCommand(botClient, cancellationToken, id, Placeholders.PlaceHolder6, messageId);
             }
             return result;
         }

@@ -13,7 +13,7 @@ namespace TelegramBot.Core.Models.Configuration
             var botCommands = new BotCommands();
             var botNotifications = new BotCommandsNotification();
             var botInlineCommands = new BotInlineCommands();
-
+            var textPlaceHolders = new TextPlaceHolders();
 
             configuration.Bind(nameof(BotConfiguration), botConfiguration);
             configuration.Bind(nameof(ProgramConfiguration), programConfiguration);
@@ -21,6 +21,7 @@ namespace TelegramBot.Core.Models.Configuration
             configuration.Bind(nameof(BotCommands), botCommands);
             configuration.Bind(nameof(BotCommandsNotification), botNotifications);
             configuration.Bind(nameof(BotInlineCommands), botInlineCommands);
+            configuration.Bind(nameof(TextPlaceHolders), textPlaceHolders);
 
             services.AddSingleton(botConfiguration);
             services.AddSingleton(programConfiguration);
@@ -28,6 +29,7 @@ namespace TelegramBot.Core.Models.Configuration
             services.AddSingleton(botCommands);
             services.AddSingleton(botNotifications);
             services.AddSingleton(botInlineCommands);
+            services.AddSingleton(textPlaceHolders);
 
             return services;
         }

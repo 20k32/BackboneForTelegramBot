@@ -13,7 +13,7 @@ namespace TelegramBot.Core.Events.Cache
         public readonly BotInlineCommands InlineCommands = null!;
         public readonly IEnumerable<BotCommand> TelegramBotCommands = null!;
         public readonly InlineKeyboardMarkup InlineKeyboardMarkup = null!;
-
+        public readonly InlineKeyboardMarkup LateralInlineKeyboardMarkup = null!;
 
         public GuiComponentsCache(BotCommands commands, BotCommandsNotification notifications, BotInlineCommands inlineCommands)
         {
@@ -40,15 +40,32 @@ namespace TelegramBot.Core.Events.Cache
             HomeReplyMarkup = new(new KeyboardButton[][]
             {
 
-                new KeyboardButton[] { new(Commands.HideButtonsButtonName) }
+                new KeyboardButton[] { new(Commands.ButtonPlaceHolder1) },
+                new KeyboardButton[] { new(Commands.ButtonPlaceHolder2) }
             });
 
             InlineKeyboardMarkup = new(new InlineKeyboardButton[][]
             {
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData(InlineCommands.InlineButtonOkName),
-                    InlineKeyboardButton.WithCallbackData(InlineCommands.InlineButtonCancelName)
+                    InlineKeyboardButton.WithCallbackData(InlineCommands.InlineButtonOkName, InlineCommands.InlineButtonOkCallback),
+                    InlineKeyboardButton.WithCallbackData(InlineCommands.InlineButtonCancelName, InlineCommands.InlineButtonCancelCallback)
+                }
+            });
+
+            LateralInlineKeyboardMarkup = new(new InlineKeyboardButton[][]
+            {
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData(InlineCommands.LateralInlineKeyboardButtonNiceName,
+                        InlineCommands.LateralInlineKeyboardButtonNiceCallback),
+                    InlineKeyboardButton.WithCallbackData(InlineCommands.InlineButtonCancelName,
+                        InlineCommands.InlineButtonCancelCallback)
+                },
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithUrl(InlineCommands.LateralInlineKeyboardButtonGoToGoogleName,
+                        "https://www.google.com")
                 }
             });
         }
