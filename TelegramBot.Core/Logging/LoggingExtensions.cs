@@ -2,7 +2,7 @@
 
 namespace TelegramBot.Core.Logging
 {
-    internal static class DependencyInjection
+    internal static class LoggingExtensions
     {
         public static IServiceCollection RegisterCustomLogger(this IServiceCollection services) =>
             services.AddSingleton<ILogger, CustomLogger>();

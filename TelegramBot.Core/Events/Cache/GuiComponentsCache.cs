@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Telegram.Bot.Types.ReplyMarkups;
+﻿using Telegram.Bot.Types.ReplyMarkups;
 using TelegramBot.Core.Models.Configuration;
 
 namespace TelegramBot.Core.Events.Cache
