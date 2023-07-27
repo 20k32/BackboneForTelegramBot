@@ -4,6 +4,5 @@
     {
         public string ConditionToStopProgram { get; set; } = null!;
         public string ConditionToClearConsole { get; set; } = null!;
-
     }
 }

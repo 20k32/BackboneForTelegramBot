@@ -1,6 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using TelegramBot.Core.Events.Cache;
 using TelegramBot.Core.Logging;
 using TelegramBot.Core.Models.Configuration;
 
@@ -10,12 +11,16 @@ namespace TelegramBot.Core.TelegramBotUpdateHandler
     {
         private ITelegramBotClient TelegramClient = null!;
         private ILogger Logger = null!;
+        private EventCache Events = null!;
         public ProgramConfiguration Configuration = null!;
+
 
         public TelegramBotEventsHandler(ITelegramBotClient telegramBotClient,
             ProgramConfiguration programConfig,
-            ILogger logger) =>
-            (TelegramClient, Configuration, Logger) = (telegramBotClient, programConfig, logger);
+            ILogger logger,
+            EventCache events) =>
+            (TelegramClient, Configuration, Logger, Events) =
+                (telegramBotClient, programConfig, logger, events);
 
         private async Task ConditionToStopBot()
         {
@@ -56,11 +61,11 @@ namespace TelegramBot.Core.TelegramBotUpdateHandler
 
             switch (update.Type)
             {
-                case UpdateType.Message: break;
+                case UpdateType.Message when update.Message is not null:
+                    await Events.SendShowButtonsCommand(botClient, cancellationToken, update.Message.Chat.Id);
+                    break;
                 case UpdateType.CallbackQuery: break;
             }
-
-            await botClient.SendTextMessageAsync(update.Message.Chat.Id, update.Message.Text, cancellationToken: cancellationToken);
         }
 
         private Task HandleExceptionAsync(ITelegramBotClient botClient, Exception ex, CancellationToken cancellationToken) =>

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TelegramBot.Core;
-using TelegramBot.Core.Models.Configuration;
 
 namespace TelegramBot.Presentation
 {
