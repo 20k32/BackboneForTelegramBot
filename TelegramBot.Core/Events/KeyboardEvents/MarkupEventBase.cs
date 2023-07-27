@@ -1,16 +1,16 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace TelegramBot.Core.Events.KeyboardEvents
+namespace TelegramBot.Core.Events
 {
-    internal class ReplyMarkupEventBase : EventBase
+    internal class MarkupEventBase : EventBase
     {
-        public ReplyMarkupBase ReplyMarkup = null!;
+        public IReplyMarkup ReplyMarkup = null!;
 
-        public ReplyMarkupEventBase(
+        public MarkupEventBase(
             ITelegramBotClient botClient,
             CancellationToken cancellationToken,
-            ReplyMarkupBase replyMarkup,
+            IReplyMarkup replyMarkup,
             string command,
             long chatId) : base(botClient, cancellationToken, command, chatId) =>
         (ReplyMarkup) = (replyMarkup);

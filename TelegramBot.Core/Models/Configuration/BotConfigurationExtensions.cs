@@ -11,16 +11,23 @@ namespace TelegramBot.Core.Models.Configuration
             var programConfiguration = new ProgramConfiguration();
             var programNotifications = new ProgramNotifications();
             var botCommands = new BotCommands();
+            var botNotifications = new BotCommandsNotification();
+            var botInlineCommands = new BotInlineCommands();
+
 
             configuration.Bind(nameof(BotConfiguration), botConfiguration);
             configuration.Bind(nameof(ProgramConfiguration), programConfiguration);
             configuration.Bind(nameof(ProgramNotifications), programNotifications);
             configuration.Bind(nameof(BotCommands), botCommands);
+            configuration.Bind(nameof(BotCommandsNotification), botNotifications);
+            configuration.Bind(nameof(BotInlineCommands), botInlineCommands);
 
             services.AddSingleton(botConfiguration);
             services.AddSingleton(programConfiguration);
             services.AddSingleton(programNotifications);
             services.AddSingleton(botCommands);
+            services.AddSingleton(botNotifications);
+            services.AddSingleton(botInlineCommands);
 
             return services;
         }

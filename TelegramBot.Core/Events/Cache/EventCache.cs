@@ -2,7 +2,8 @@
 using System.Threading;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using TelegramBot.Core.Events.KeyboardEvents;
+using Telegram.Bot.Types.ReplyMarkups;
+using TelegramBot.Core.Events;
 
 namespace TelegramBot.Core.Events.Cache
 {
@@ -15,46 +16,65 @@ namespace TelegramBot.Core.Events.Cache
         public EventCache(GuiComponentsCache componentsCache, IMediator mediator) =>
             (ComponentsCache, Mediator) = (componentsCache, mediator);
 
-        public Task<Message> SendShowButtonsCommand(ITelegramBotClient botClient, CancellationToken cancellationToken, long chatId)
+        public void EnsureButtosAreCreated(
+            ITelegramBotClient botClient,
+            CancellationToken cancellationToken,
+            long chatId,
+            string message,
+            IReplyMarkup replyMarkup)
         {
             if (ButtonCommand == null)
             {
                 ButtonCommand = new(
                     botClient,
                     cancellationToken,
-                    ComponentsCache.HomeReplyMarkup,
-                    ComponentsCache.Commands.ShowButtonsCommand,
+                    replyMarkup,
+                    message,
                     chatId);
             }
             else
             {
                 ButtonCommand.ChatId = chatId;
-                ButtonCommand.ReplyMarkup = ComponentsCache.HomeReplyMarkup;
-                ButtonCommand.BotCommand = ComponentsCache.Commands.ShowButtonsCommand;
+                ButtonCommand.ReplyMarkup = replyMarkup;
+                ButtonCommand.BotCommand = message;
             }
+        }
+
+        public Task<Message> SendShowButtonsCommand(ITelegramBotClient botClient, CancellationToken cancellationToken, long chatId)
+        {
+            EnsureButtosAreCreated(
+                botClient,
+                cancellationToken,
+                chatId,
+                ComponentsCache.Notifications.ShowButtonsCommandNotification,
+                ComponentsCache.HomeReplyMarkup);
 
             return Mediator.Send(ButtonCommand);
         }
 
         public Task<Message> SendHideButtonsCommand(ITelegramBotClient botClient, CancellationToken cancellationToken, long chatId)
         {
-            if (ButtonCommand == null)
-            {
-                ButtonCommand = new(
-                    botClient,
-                    cancellationToken,
-                    ComponentsCache.EmptyReplyMarkup,
-                    ComponentsCache.Commands.HideButtonsCommand,
-                    chatId);
-            }
-            else
-            {
-                ButtonCommand.ChatId = chatId;
-                ButtonCommand.ReplyMarkup = ComponentsCache.EmptyReplyMarkup;
-                ButtonCommand.BotCommand = ComponentsCache.Commands.HideButtonsCommand;
-            }
+            EnsureButtosAreCreated(
+                botClient,
+                cancellationToken,
+                chatId,
+                ComponentsCache.Notifications.HideButtonsCommandNotification,
+                ComponentsCache.EmptyReplyMarkup);
 
             return Mediator.Send(ButtonCommand);
         }
+
+        public Task<Message> SendTextMessageWithInlineButtons(ITelegramBotClient botClient, CancellationToken cancellationToken, long chatId, string message)
+        {
+            EnsureButtosAreCreated(
+                botClient,
+                cancellationToken,
+                chatId,
+                message,
+                ComponentsCache.InlineKeyboardMarkup);
+
+            return Mediator.Send(ButtonCommand);
+        }
+
     }
 }

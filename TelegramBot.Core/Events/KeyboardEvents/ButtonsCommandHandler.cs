@@ -2,7 +2,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace TelegramBot.Core.Events.KeyboardEvents
+namespace TelegramBot.Core.Events
 {
     internal class ButtonsCommandHandler : IRequestHandler<ButtonsCommand, Message>
     {

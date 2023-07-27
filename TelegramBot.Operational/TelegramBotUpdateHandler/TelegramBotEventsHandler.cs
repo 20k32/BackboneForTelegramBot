@@ -59,12 +59,16 @@ namespace TelegramBot.Operational.TelegramBotUpdateHandler
                 await Task.CompletedTask;
             }
 
-            switch (update.Type)
+            switch (update!.Type)
             {
-                case UpdateType.Message when update.Message is not null:
-                    await HandleTextMessage(botClient, update.Message, cancellationToken);
+                case UpdateType.Message 
+                    when update.Message is { } message:
+                        await HandleTextMessage(botClient, message, cancellationToken);
                     break;
-                case UpdateType.CallbackQuery: break;
+                case UpdateType.CallbackQuery
+                    when update.Message is { } message:
+                    
+                    break;
             }
         }
 
@@ -87,7 +91,10 @@ namespace TelegramBot.Operational.TelegramBotUpdateHandler
             {
                 result = Events.SendShowButtonsCommand(botClient, cancellationToken, id);
             }
-
+            else
+            {
+                result = Events.SendTextMessageWithInlineButtons(botClient, cancellationToken, id, text);
+            }
             return result;
         }
 
