@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TelegramBot.Operational;
+
 using TelegramBot.Core;
 
 namespace TelegramBot.Presentation
@@ -14,6 +16,7 @@ namespace TelegramBot.Presentation
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddServicesForCoreLayer(Configuration);
+            services.AddServicesForOperationalLayer();
 
             return services.BuildServiceProvider();
         }

@@ -1,6 +1,6 @@
-﻿namespace TelegramBot.Core.TelegramBotUpdateHandler
+﻿namespace TelegramBot.Operational.TelegramBotUpdateHandler
 {
-    internal class TelegramBotController
+    internal sealed class TelegramBotController
     {
         private TelegramBotEventsHandler BotEventsHandler = null!;
 

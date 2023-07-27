@@ -4,7 +4,6 @@ using Telegram.Bot;
 using TelegramBot.Core.Events;
 using TelegramBot.Core.Logging;
 using TelegramBot.Core.Models.Configuration;
-using TelegramBot.Core.TelegramBotUpdateHandler;
 
 namespace TelegramBot.Core
 {
@@ -18,9 +17,6 @@ namespace TelegramBot.Core
             
             var token = services.BuildServiceProvider().GetService<BotConfiguration>()!.BotKey;
             services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(token));
-
-            services.AddSingleton<TelegramBotEventsHandler>();
-            services.AddSingleton<TelegramBotController>();
 
             return services;
         }

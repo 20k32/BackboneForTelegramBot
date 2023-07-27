@@ -5,7 +5,7 @@ using TelegramBot.Core.Events.Cache;
 using TelegramBot.Core.Logging;
 using TelegramBot.Core.Models.Configuration;
 
-namespace TelegramBot.Core.TelegramBotUpdateHandler
+namespace TelegramBot.Operational.TelegramBotUpdateHandler
 {
     internal sealed class TelegramBotEventsHandler
     {
